@@ -454,7 +454,8 @@
       .site-footer .center { display: none; }
       .site-footer { grid-template-columns: 1fr 1fr; }
       main { padding-top: 110px; }
-      .card { grid-column: span 12; margin-top: 0 !important; margin-bottom: 60px; }
+      .card { grid-column: 1 / -1; margin-top: 0 !important; margin-bottom: 60px; }
+      .grid, .studio, .detail-body { grid-template-columns: minmax(0, 1fr); }
       .studio .lead, .studio .cols { grid-column: 1 / -1; }
       .studio .cols { grid-template-columns: 1fr; }
       .colophon { flex-direction: column; align-items: start; }
