@@ -239,6 +239,37 @@ window.PROJECTS = [
     "featured": true
   },
   {
+    "title": "The Shift 단 하나의 미니 김치냉장고",
+    "brand": "MINIX / The Shift",
+    "year": 2026,
+    "role": "Creative Direction",
+    "direction": "1~2인 가구는 빠르게 늘었지만, 김치냉장고는 여전히 대가족에 맞춘 크기와 형태에 머물러 있다는 점에 주목했습니다.\n영상은 그동안 몰라보게 달라진 현대인의 인테리어를 짧게 보여준 뒤, 그 뒤편에 여전히 자리한 구식 김치냉장고를 이어 비추며 보는 사람에게 질문을 던지는 것으로 시작합니다.\n이어 가로로 열던 문을 세로로 열 수 있게 바꿔, 좁은 공간에도 슬림하게 둘 수 있는 디자인을 강조했습니다. 작은 크기에도 다양한 김치를 넉넉히 담을 수 있다는 점은 '한 계절 거뜬하다'는 카피로 풀어냈고, 김치를 담고 꺼내는 일상을 인스타그래머블한 라이프스타일로 연출했습니다.\n그 결과 The Shift는 더플렌더에 이어 미닉스의 두 번째 히어로 SKU로 자리 잡았습니다.",
+    "img": "works/WORK_10/03.jpg",
+    "images": [
+      {
+        "src": "https://youtu.be/2u8q6nHHjD4?si=O9IKwAeijPVcjrqt",
+        "size": "auto"
+      },
+      {
+        "src": "works/WORK_10/01.jpg",
+        "size": "third"
+      },
+      {
+        "src": "works/WORK_10/02.jpg",
+        "size": "third"
+      },
+      {
+        "src": "works/WORK_10/03.jpg",
+        "size": "third"
+      },
+      {
+        "src": "works/WORK_10/04.jpg",
+        "size": "auto"
+      }
+    ],
+    "featured": true
+  },
+  {
     "title": "The Shift Life Style",
     "brand": "MINIX / The Shift",
     "year": 2026,
@@ -276,37 +307,6 @@ window.PROJECTS = [
       },
       {
         "src": "works/WORK_04/09.jpg",
-        "size": "auto"
-      }
-    ],
-    "featured": true
-  },
-  {
-    "title": "The Shift 단 하나의 미니 김치냉장고",
-    "brand": "MINIX / The Shift",
-    "year": 2026,
-    "role": "Creative Direction",
-    "direction": "1~2인 가구는 빠르게 늘었지만, 김치냉장고는 여전히 대가족에 맞춘 크기와 형태에 머물러 있다는 점에 주목했습니다.\n영상은 그동안 몰라보게 달라진 현대인의 인테리어를 짧게 보여준 뒤, 그 뒤편에 여전히 자리한 구식 김치냉장고를 이어 비추며 보는 사람에게 질문을 던지는 것으로 시작합니다.\n이어 가로로 열던 문을 세로로 열 수 있게 바꿔, 좁은 공간에도 슬림하게 둘 수 있는 디자인을 강조했습니다. 작은 크기에도 다양한 김치를 넉넉히 담을 수 있다는 점은 '한 계절 거뜬하다'는 카피로 풀어냈고, 김치를 담고 꺼내는 일상을 인스타그래머블한 라이프스타일로 연출했습니다.\n그 결과 The Shift는 더플렌더에 이어 미닉스의 두 번째 히어로 SKU로 자리 잡았습니다.",
-    "img": "works/WORK_10/03.jpg",
-    "images": [
-      {
-        "src": "https://youtu.be/2u8q6nHHjD4?si=O9IKwAeijPVcjrqt",
-        "size": "auto"
-      },
-      {
-        "src": "works/WORK_10/01.jpg",
-        "size": "third"
-      },
-      {
-        "src": "works/WORK_10/02.jpg",
-        "size": "third"
-      },
-      {
-        "src": "works/WORK_10/03.jpg",
-        "size": "third"
-      },
-      {
-        "src": "works/WORK_10/04.jpg",
         "size": "auto"
       }
     ],
