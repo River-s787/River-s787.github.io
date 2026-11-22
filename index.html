@@ -423,6 +423,7 @@
     .pform .row { display: flex; gap: 8px; margin-top: 6px; }
     .pform textarea { resize: vertical; font-size: 13px; line-height: 1.6; border: 1px solid var(--hairline); padding: 8px; }
     .pform .folder-row input { flex: 1; }
+    .pform .pick-hint { font-size: 11px; opacity: .55; align-self: center; }
     .pform .row { flex-wrap: wrap; }
     .gal-head p { font-size: 12px; line-height: 1.6; opacity: .7; margin-top: 4px; }
     .gal-head b { font-weight: 600; }
@@ -639,8 +640,9 @@
         <p>위에서부터 순서대로 보입니다. 항목마다 크기를 고르세요 — <b>전체</b> 한 줄 / <b>1/2</b> 두 개 나란히 / <b>1/3</b> 세 개 나란히 / <b>자동</b> 가로는 전체, 세로는 1/2. ★ = Works 카드 대표 (사진·영상 파일·YouTube 가능).</p>
       </div>
       <div class="row folder-row">
-        <input type="text" name="folder" placeholder="WORK_03" />
-        <button class="btn" type="button" id="load-folder">폴더 불러오기</button>
+        <button class="btn primary" type="button" id="pick-files">파일 불러오기</button>
+        <span class="pick-hint" id="pick-hint">사진·영상을 여러 개 골라도 됩니다</span>
+        <input type="file" id="file-input" multiple accept="image/*,video/*,.heic,.heif" hidden />
       </div>
       <ol class="gal-list" id="gal-list"></ol>
       <div class="row folder-row">
@@ -663,8 +665,8 @@
     <p class="admin-help">
       <b>사용 방법</b><br />
       0. 처음 한 번 위의 <b>사이트 폴더 연결</b>을 눌러 <b>SITE_yw</b> 폴더를 선택하세요 (Chrome).<br />
-      1. 새 프로젝트 사진·영상 원본을 <b>images/WORK_03</b> 같은 폴더에 넣습니다. (파일 이름은 상관없음)<br />
-      2. 위 칸에 <b>WORK_03</b>을 입력하고 <b>폴더 불러오기</b>를 누르면, 사진은 웹용 크기로 자동 변환되어 목록에 채워집니다.<br />
+      1. <b>파일 불러오기</b>를 누르고 컴퓨터 어디에 있든 원하는 사진·영상을 고르세요. (여러 개 선택 가능, 파일 이름 상관없음)<br />
+      2. 고른 파일은 사이트 폴더의 <b>works/WORK_XX</b>에 자동으로 복사되고(사진은 웹용 크기로 변환), 목록 맨 아래에 추가됩니다. 새 프로젝트면 새 WORK 폴더가 만들어집니다.<br />
       3. YouTube·Vimeo 영상은 링크를 <b>경로·링크 추가</b> 칸에 붙여넣으면 됩니다.
       (YouTube는 사이트를 인터넷에 올린 뒤 페이지 안에서 재생되고, 내 컴퓨터에서 파일로 열었을 땐 YouTube로 이동합니다.)<br />
       4. 크기·순서를 정하고 <b>추가하기 / 수정 저장</b> → <b>projects.js 저장</b>을 누르면 완료됩니다.
@@ -1102,6 +1104,7 @@
     function resetForm() {
       editing = -1; gal = []; coverSrc = '';
       form.reset();
+      document.getElementById('pick-hint').textContent = '사진·영상을 여러 개 골라도 됩니다';
       form.year.value = new Date().getFullYear();
       form.featured.checked = true;
       renderGal();
@@ -1122,6 +1125,7 @@
       form.featured.checked = !!p.featured;
       gal = galleryOf(p);
       coverSrc = p.img || '';
+      document.getElementById('pick-hint').textContent = '사진·영상을 여러 개 골라도 됩니다';
       renderGal();
       document.getElementById('form-title').textContent = `편집 중 — ${p.title}`;
       document.getElementById('submit-btn').textContent = '수정 저장';
@@ -1147,7 +1151,7 @@
     }
 
     /* ---------- 사이트 폴더 연결 (Chrome) ----------
-       한 번 연결하면: 폴더 불러오기 시 사진을 웹용으로 자동 변환하고, projects.js를 폴더에 바로 저장합니다.
+       한 번 연결하면: 파일 불러오기로 고른 사진·영상을 works 폴더에 복사(사진은 웹용 변환)하고, projects.js를 폴더에 바로 저장합니다.
        연결 정보는 이 브라우저에 기억되며, 다음에 열 때 권한 확인 창이 한 번 뜰 수 있습니다. */
     const canDir = 'showDirectoryPicker' in window;
     let siteDir = null;
@@ -1214,43 +1218,51 @@
       ctx.drawImage(bmp, 0, 0, c.width, c.height); bmp.close && bmp.close();
       return new Promise(r => c.toBlob(r, 'image/jpeg', 0.82));
     }
-    /* 폴더 불러오기 (사이트 폴더 연결 시)
-       1) images/WORK_XX 에 원본이 있으면 → works/WORK_XX/01.jpg, 02.mp4 … 로 변환 후 사용 (이미 변환된 건 건너뜀)
-       2) 원본이 없으면 → works/WORK_XX 안의 파일을 이름 순서대로 그대로 사용 */
-    async function loadFolderFromDisk(root, name) {
-      const warn = [];
-      let originals = [];
-      try { originals = (await listFiles(await subdir(root, ['images', name]))).filter(h => IMG_RE.test(h.name) || VID_RE.test(h.name) || HEIC_RE.test(h.name)); } catch {}
-      if (originals.length) {
-        const out = await subdir(root, ['works', name], true);
-        const found = [];
-        for (let k = 0; k < originals.length; k++) {
-          const h = originals[k];
-          const num = String(k + 1).padStart(2, '0');
-          setStatus(`${name} 준비 중… ${k + 1} / ${originals.length}  (${h.name})`);
-          if (HEIC_RE.test(h.name)) { warn.push(`${h.name}: HEIC·TIFF는 변환할 수 없어요. JPG로 저장해서 다시 넣어 주세요.`); continue; }
-          const file = await h.getFile();
-          const isVid = VID_RE.test(h.name);
-          const ext = isVid ? (/\.mov$/i.test(h.name) ? 'mov' : /\.webm$/i.test(h.name) ? 'webm' : 'mp4') : 'jpg';
-          const outName = `${num}.${ext}`;
-          let fresh = false;
-          try { fresh = (await (await out.getFileHandle(outName)).getFile()).lastModified >= file.lastModified; } catch {}
-          if (!fresh) {
-            if (isVid) {
-              await writeFile(out, outName, file);
-              if (file.size > 50e6) warn.push(`${h.name}: ${Math.round(file.size / 1e6)}MB — 무거우니 YouTube/Vimeo 링크나 터미널 변환(tools/make-web-media.sh)을 추천해요.`);
-            } else {
-              await writeFile(out, outName, await toWebJpeg(file));
-            }
-          }
-          found.push(`works/${name}/${outName}`);
-        }
-        return { found, warn };
+    /* 파일 불러오기: 내 컴퓨터 어디서든 고른 사진·영상을 사이트 폴더 works/WORK_XX 로 복사
+       - 지금 편집 중인 프로젝트가 이미 쓰는 WORK 폴더가 있으면 그 폴더에, 없으면 새 WORK_NN 폴더를 만듦
+       - 파일 이름은 폴더 안 마지막 번호 다음부터 01.jpg, 02.mp4 … 로 붙임 (사진은 긴 변 2000px JPEG로 변환) */
+    async function targetWorkFolder(root) {
+      const used = [...gal.map(g => g.src), coverSrc, editing >= 0 ? projects[editing].img : '']
+        .map(s => (s || '').match(/^works\/([^/]+)\//)).find(Boolean);
+      if (used) return used[1];
+      const works = await subdir(root, ['works'], true);
+      let max = 0;
+      for await (const [name, h] of works.entries()) {
+        const m = h.kind === 'directory' && name.match(/^WORK_(\d+)$/i);
+        if (m) max = Math.max(max, +m[1]);
       }
-      try {
-        const files = (await listFiles(await subdir(root, ['works', name]))).filter(h => IMG_RE.test(h.name) || VID_RE.test(h.name));
-        return { found: files.map(h => `works/${name}/${h.name}`), warn };
-      } catch { return { found: [], warn }; }
+      return `WORK_${String(max + 1).padStart(2, '0')}`;
+    }
+    async function importFiles(root, files) {
+      const warn = [], added = [];
+      const name = await targetWorkFolder(root);
+      const out = await subdir(root, ['works', name], true);
+      let n = 0;
+      for (const h of await listFiles(out)) { const m = h.name.match(/^(\d+)\./); if (m) n = Math.max(n, +m[1]); }
+      for (let k = 0; k < files.length; k++) {
+        const file = files[k];
+        setStatus(`works/${name} 에 복사 중… ${k + 1} / ${files.length}  (${file.name})`);
+        const isVid = VID_RE.test(file.name) || file.type.startsWith('video/');
+        const isImg = IMG_RE.test(file.name) || HEIC_RE.test(file.name) || file.type.startsWith('image/');
+        if (!isVid && !isImg) { warn.push(`${file.name}: 사진·영상 파일이 아니라서 건너뛰었어요.`); continue; }
+        const num = String(n + 1).padStart(2, '0');
+        let outName;
+        if (isVid) {
+          const ext = /\.mov$/i.test(file.name) ? 'mov' : /\.webm$/i.test(file.name) ? 'webm' : 'mp4';
+          outName = `${num}.${ext}`;
+          await writeFile(out, outName, file);
+          if (file.size > 50e6) warn.push(`${file.name}: ${Math.round(file.size / 1e6)}MB — 무거우니 YouTube/Vimeo 링크나 터미널 변환(tools/make-web-media.sh)을 추천해요.`);
+        } else {
+          let jpg;
+          try { jpg = await toWebJpeg(file); }
+          catch { warn.push(`${file.name}: 이 형식(HEIC 등)은 변환할 수 없어요. JPG로 저장해서 다시 골라 주세요.`); continue; }
+          outName = `${num}.jpg`;
+          await writeFile(out, outName, jpg);
+        }
+        n++;
+        added.push(`works/${name}/${outName}`);
+      }
+      return { added, warn, name };
     }
 
     async function saveFile() {
@@ -1374,51 +1386,39 @@
       });
       ensureSiteDir({ ask: false }).catch(() => updateDirStatus(false));
 
-      // 폴더 불러오기: 사이트 폴더가 연결돼 있으면 폴더 안 파일을 직접 읽고(사진은 자동 변환),
-      // 아니면 works/WORK_XX/01, 02 … 번호 파일을 차례로 찾음
-      document.getElementById('load-folder').addEventListener('click', async () => {
-        const name = form.folder.value.trim().replace(/^(works|images)\//, '').replace(/\/$/, '');
-        if (!name) { form.folder.focus(); return; }
-        const btn = document.getElementById('load-folder');
-        if (canDir) {
-          let root = null;
-          try { root = await ensureSiteDir(); } catch (e) { if (e.name === 'AbortError') return; }
-          if (root) {
-            btn.disabled = true;
-            try {
-              const { found, warn } = await loadFolderFromDisk(root, name);
-              setStatus();
-              if (!found.length) { alert(`images/${name} 또는 works/${name} 폴더에서 사진·영상을 찾지 못했습니다.\n폴더 이름을 확인해 주세요.`); return; }
-              if (gal.length && !confirm(`지금 목록을 ${name} 폴더의 사진·영상 ${found.length}개로 바꿀까요?`)) return;
-              gal = found.map(src => ({ src, size: 'auto' }));
-              coverSrc = found.find(s => mediaInfo(s).kind === 'image') || found[0];
-              renderGal();
-              if (warn.length) alert(warn.join('\n'));
-            } catch (e) {
-              setStatus(); alert('폴더를 읽는 중 문제가 생겼습니다: ' + e.message);
-            } finally { btn.disabled = false; }
-            return;
+      // 파일 불러오기: 파일 선택 창 → 사이트 폴더 works/WORK_XX 로 복사 → 목록 맨 아래에 추가
+      const pickBtn = document.getElementById('pick-files');
+      const fileInput = document.getElementById('file-input');
+      pickBtn.addEventListener('click', async () => {
+        if (!canDir) { alert('파일 불러오기는 Chrome에서만 됩니다. (고른 파일을 사이트 폴더에 복사해야 해서요)'); return; }
+        // 이미 연결·허용돼 있으면 바로 파일 선택 창을 엶
+        let root = await ensureSiteDir({ ask: false }).catch(() => null);
+        if (root) { fileInput.click(); return; }
+        try { root = await ensureSiteDir(); } catch (e) { if (e.name !== 'AbortError') alert('사이트 폴더를 연결하지 못했습니다: ' + e.message); return; }
+        if (!root) return;
+        try { fileInput.click(); } catch {}
+        setStatus('사이트 폴더가 연결됐어요. 파일 선택 창이 안 뜨면 파일 불러오기를 한 번 더 눌러 주세요.');
+      });
+      fileInput.addEventListener('change', async () => {
+        const files = [...fileInput.files];
+        fileInput.value = '';
+        if (!files.length) return;
+        const root = await ensureSiteDir({ ask: false }).catch(() => null);
+        if (!root) { alert('사이트 폴더 연결이 풀렸어요. 파일 불러오기를 다시 눌러 주세요.'); return; }
+        pickBtn.disabled = true;
+        try {
+          const { added, warn, name } = await importFiles(root, files);
+          setStatus();
+          if (added.length) {
+            gal.push(...added.map(src => ({ src, size: 'auto' })));
+            if (!coverSrc) coverSrc = added.find(s => mediaInfo(s).kind === 'image') || added[0];
+            renderGal();
+            document.getElementById('pick-hint').textContent = `${added.length}개 추가됨 → works/${name}`;
           }
-        }
-        const imgExists = src => new Promise(r => { const im = new Image(); im.onload = () => r(true); im.onerror = () => r(false); im.src = src + '?v=' + Date.now(); });
-        const vidExists = src => new Promise(r => {
-          const v = document.createElement('video'); v.preload = 'metadata'; v.muted = true;
-          v.onloadedmetadata = () => { r(true); v.removeAttribute('src'); v.load(); };
-          v.onerror = () => r(false);
-          v.src = src + '?v=' + Date.now();
-        });
-        const found = [];
-        for (let n = 1; n <= 80; n++) {
-          const base = `works/${name}/${String(n).padStart(2, '0')}`;
-          if (await imgExists(base + '.jpg')) found.push(base + '.jpg');
-          else if (await vidExists(base + '.mp4')) found.push(base + '.mp4');
-          else break;
-        }
-        if (!found.length) { alert(`works/${name}/ 에서 01.jpg 또는 01.mp4 를 찾지 못했습니다.\nChrome에서 "사이트 폴더 연결"을 하면 파일 이름과 상관없이 불러올 수 있습니다.`); return; }
-        if (gal.length && !confirm(`지금 목록을 ${name} 폴더의 사진·영상 ${found.length}개로 바꿀까요?`)) return;
-        gal = found.map(src => ({ src, size: 'auto' }));
-        coverSrc = found.find(s => mediaInfo(s).kind === 'image') || found[0];
-        renderGal();
+          if (warn.length) alert(warn.join('\n'));
+        } catch (e) {
+          setStatus(); alert('파일을 복사하는 중 문제가 생겼습니다: ' + e.message);
+        } finally { pickBtn.disabled = false; }
       });
 
       form.addEventListener('submit', e => {

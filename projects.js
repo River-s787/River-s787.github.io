@@ -5,28 +5,40 @@
 //     size — "full" 한 줄 전체 / "half" 두 장 나란히 / "third" 세 장 나란히 / "auto" 가로는 전체, 세로는 1/2
 window.PROJECTS = [
   {
-    "title": "The Shif Life Style",
-    "brand": "MINIX / The Shift",
+    "title": "Signature Global",
+    "brand": "THOME",
     "year": 2026,
-    "role": "Visual Director",
+    "role": "Creative Director",
     "direction": "",
-    "img": "works/WORK_04/04.jpg",
+    "img": "works/WORK_05/07.jpg",
     "images": [
       {
-        "src": "works/WORK_04/04.jpg",
+        "src": "works/WORK_05/03.jpg",
+        "size": "full"
+      },
+      {
+        "src": "works/WORK_05/01.jpg",
         "size": "auto"
       },
       {
-        "src": "works/WORK_04/02.jpg",
+        "src": "works/WORK_05/07.jpg",
         "size": "auto"
       },
       {
-        "src": "works/WORK_04/03.jpg",
+        "src": "works/WORK_05/06.jpg",
+        "size": "full"
+      },
+      {
+        "src": "works/WORK_05/04.jpg",
         "size": "auto"
       },
       {
-        "src": "works/WORK_04/01.jpg",
+        "src": "works/WORK_05/05.jpg",
         "size": "auto"
+      },
+      {
+        "src": "works/WORK_05/02.jpg",
+        "size": "full"
       }
     ],
     "featured": true
@@ -35,7 +47,7 @@ window.PROJECTS = [
     "title": "THOME × KAZUHA",
     "brand": "THOME Twenty Up",
     "year": 2026,
-    "role": "Creative Direction, Art Direction",
+    "role": "Creative Director",
     "direction": "JOYFUL AND GLOWY. CLEAR, BUT COLORED. PURE. BARE. FEARLESS.\n르세라핌의 카즈하가 가진 맑고 투명한 분위기를 투앤티업과 함께 담고 싶었습니다. 더 밝고 화사하게, 맑지만 컬러가 살아 있게, 그리고 꾸미지 않은 있는 그대로의 모습이 자연스럽게 드러나도록 세 가지 무드로 풀어 보았습니다. 아티스트와 제품이 하나의 이야기로 어우러지도록 했습니다.",
     "img": "works/WORK_01/05.jpg",
     "images": [
@@ -97,6 +109,41 @@ window.PROJECTS = [
       {
         "src": "works/WORK_02/03.jpg",
         "size": "full"
+      },
+      {
+        "src": "works/WORK_02/05.jpg",
+        "size": "auto"
+      },
+      {
+        "src": "works/WORK_02/06.jpg",
+        "size": "auto"
+      }
+    ],
+    "featured": true
+  },
+  {
+    "title": "The Shif Life Style",
+    "brand": "MINIX / The Shift",
+    "year": 2026,
+    "role": "Visual Director",
+    "direction": "",
+    "img": "works/WORK_04/04.jpg",
+    "images": [
+      {
+        "src": "works/WORK_04/04.jpg",
+        "size": "auto"
+      },
+      {
+        "src": "works/WORK_04/02.jpg",
+        "size": "auto"
+      },
+      {
+        "src": "works/WORK_04/03.jpg",
+        "size": "auto"
+      },
+      {
+        "src": "works/WORK_04/01.jpg",
+        "size": "auto"
       }
     ],
     "featured": true
@@ -106,15 +153,15 @@ window.PROJECTS = [
     "brand": "THOME / Branded Contents",
     "year": 2024,
     "role": "Creative Director",
-    "direction": "",
+    "direction": "유명 메이크업 아티스트의 목소리를 빌려, THOME이 지향하는 주도적인 자기관리를 이야기한 콘텐츠입니다. 좋은 메이크업은 잘 관리된 피부에서 시작되고, 나를 가장 잘 아는 건 나 자신이라는 메시지를 전문가의 경험과 철학으로 풀어냈습니다.",
     "img": "works/WORK_03/01.jpg",
     "images": [
       {
-        "src": "works/WORK_03/01.jpg",
+        "src": "https://youtu.be/zHXB2N-5N6k?si=6aAGotwx1XeQkr6w",
         "size": "auto"
       },
       {
-        "src": "https://youtu.be/zHXB2N-5N6k?si=6aAGotwx1XeQkr6w",
+        "src": "works/WORK_03/01.jpg",
         "size": "auto"
       }
     ],
